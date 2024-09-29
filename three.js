@@ -2,6 +2,9 @@ import * as THREE from "three";
 import stars from "./images/stars.jpg";
 import sun from "./images/sun.jpg";
 import mercuryTexture from "./images/mercury.jpg";
+import venusTexture from "./images/venus.jpg";
+import earthTexture from "./images/earth.jpg";
+import marsTexture from "./images/mars.jpg";
 
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 
@@ -12,7 +15,7 @@ document.body.appendChild(renderer.domElement);
 const scene = new THREE.Scene();
 // Creating the camera
 const camera = new THREE.PerspectiveCamera(
-  60,
+  30,
   window.innerWidth / window.innerHeight,
   0.1,
   1000
@@ -30,13 +33,10 @@ scene.background = cubeTextureLoader.load([
 ]);
 
 const orbit = new OrbitControls(camera, renderer.domElement);
-orbit.minDistance = 50; // Prevents zooming in too close
-orbit.maxDistance = 500; // Prevents zooming out too far
+orbit.minDistance = 200; // Prevents zooming in too close
+orbit.maxDistance = 300; // Prevents zooming out too far
 camera.position.set(-90, 140, 140);
 orbit.update();
-
-const ambientLight = new THREE.AmbientLight(0x333333, 1.5);
-scene.add(ambientLight);
 
 // const redLight = new THREE.PointLight(0xff0000, 1); // Red light, moderate intensity, 300 units distance
 // redLight.position.set(0, 0, 0); // Position the light at the center of the sun
@@ -49,7 +49,7 @@ scene.add(PointLighting);
 const textureLoader = new THREE.TextureLoader();
 
 textureLoader.load(sun, function (sunTexture) {
-  const sunGeo = new THREE.SphereGeometry(16, 32, 32);
+  const sunGeo = new THREE.SphereGeometry(16, 20, 20);
   const sunMat = new THREE.MeshBasicMaterial({
     map: sunTexture,
     emissive: 0xffff00, // Glow color (yellow)
@@ -60,7 +60,7 @@ textureLoader.load(sun, function (sunTexture) {
   scene.add(sunMesh); // Add the sun to the scene
 
   // Add a larger, transparent sphere around the sun for the glow effect
-  const glowGeo = new THREE.SphereGeometry(16.5, 32, 32); // Slightly larger sphere for aura effect
+  const glowGeo = new THREE.SphereGeometry(16.5, 20, 20); // Slightly larger sphere for aura effect
   const glowMat = new THREE.MeshBasicMaterial({
     color: 0xff0000, // Red color for the glow
     transparent: true,
@@ -92,10 +92,13 @@ function createPlanet(size, texture, distancefromsun, speed) {
   return planetOrbit;
 }
 
-const mercury = createPlanet(2, mercuryTexture, 30, 0.0001);
+const mercury = createPlanet(2, mercuryTexture, 20, 0.0003);
+const venus = createPlanet(4, venusTexture, 40, 0.0002);
+const earth = createPlanet(4.5, earthTexture, 60, 0.00015); // Earth parameters
+const mars = createPlanet(3.5, marsTexture, 77, 0.0001); // Mars parameters
 
 function animate() {
-  const planets = [mercury];
+  const planets = [mercury, venus, earth, mars];
   planets.forEach((planetOrbit) => {
     planetOrbit.rotation.y += planetOrbit.userData.speed; // Orbit speed based on distance
   });
